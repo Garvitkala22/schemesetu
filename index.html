@@ -1,0 +1,2928 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchemeSetu — Entrepreneur & Citizen Scheme Discovery Platform</title>
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS — LIGHT & DARK THEMES (Blue/Green Accent)
+       ========================================================================== */
+    :root,
+    [data-theme="light"] {
+      color-scheme: light;
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --accent: #059669;
+      --accent-hover: #047857;
+      --accent-soft: #ecfdf5;
+      --accent-border: #a7f3d0;
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --navbar-bg: rgba(255, 255, 255, 0.94);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --track-bg: #e2e8f0;
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --toast-bg: #0f172a;
+      --toast-text: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.14);
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-soft: rgba(59, 130, 246, 0.16);
+      --primary-border: rgba(59, 130, 246, 0.42);
+      --accent: #10b981;
+      --accent-hover: #34d399;
+      --accent-soft: rgba(16, 185, 129, 0.16);
+      --accent-border: rgba(16, 185, 129, 0.42);
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-muted: #1e293b;
+      --navbar-bg: rgba(17, 24, 39, 0.92);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --border: #1f2937;
+      --border-strong: #334155;
+      --track-bg: #334155;
+      --warning: #fbbf24;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --warning-border: rgba(245, 158, 11, 0.4);
+      --danger: #f87171;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --danger-border: rgba(239, 68, 68, 0.4);
+      --toast-bg: #1e293b;
+      --toast-text: #f8fafc;
+      --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 18px 46px rgba(0, 0, 0, 0.65);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.28s ease, color 0.28s ease;
+    }
+
+    button, input, select {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       2. VISUAL LIGHT / DARK MODE SEGMENTED SWITCH
+       ========================================================================== */
+    .theme-switch {
+      display: inline-flex;
+      align-items: center;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 2px;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .theme-opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .theme-opt.active {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(29, 78, 216, 0.28);
+    }
+
+    .theme-opt:not(.active):hover {
+      color: var(--text);
+    }
+
+    /* ==========================================================================
+       3. BUTTONS & SHARED UI CONTROLS
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.92rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(29, 78, 216, 0.28);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.26);
+    }
+
+    .btn-accent:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+    }
+
+    .btn-outline {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .btn-outline:hover {
+      background: var(--surface-muted);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 0.84rem;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    /* ==========================================================================
+       4. AUTHENTICATION VIEW (LOGIN / SIGN-UP)
+       ========================================================================== */
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.14), transparent 38%),
+        radial-gradient(circle at 88% 82%, rgba(16, 185, 129, 0.15), transparent 40%),
+        var(--bg);
+      transition: background-color 0.28s ease;
+    }
+
+    .auth-topbar {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .auth-shell {
+      width: 100%;
+      max-width: 960px;
+      display: grid;
+      grid-template-columns: 1.08fr 1fr;
+      background: var(--surface);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      transition: background-color 0.28s ease, border-color 0.28s ease;
+    }
+
+    .auth-hero {
+      padding: 44px 38px;
+      background: linear-gradient(155deg, #0f172a 0%, #1d4ed8 54%, #059669 100%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .auth-hero h1 {
+      font-size: 1.95rem;
+      line-height: 1.22;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-hero p {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.96rem;
+    }
+
+    .auth-highlights {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .auth-highlights li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .auth-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .auth-pill {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .auth-pill.primary-pill {
+      background: rgba(16, 185, 129, 0.3);
+      border-color: rgba(167, 243, 208, 0.55);
+      font-weight: 700;
+    }
+
+    .auth-panel {
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 24px;
+    }
+
+    .auth-tab {
+      border: none;
+      background: transparent;
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .auth-tab.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .auth-panel h2 {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtext {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.93rem;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.25s ease, color 0.25s ease;
+    }
+
+    [data-theme="dark"] .form-control {
+      background: var(--surface-muted);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .auth-error {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 0.86rem;
+      margin-bottom: 14px;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-light);
+      font-size: 0.82rem;
+      margin: 16px 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .auth-note {
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      text-align: center;
+    }
+
+    /* ==========================================================================
+       5. TOP NAVBAR (DASHBOARD)
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--navbar-bg);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.28s ease, border-color 0.28s ease;
+    }
+
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 66px;
+      gap: 12px;
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.18rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+
+    .nav-brand span.ai-tag {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #ffffff;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.16s ease, color 0.16s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      padding: 5px 12px 5px 6px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .mobile-nav-drawer {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 20px 18px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-nav-drawer.open {
+      display: flex;
+    }
+
+    /* ==========================================================================
+       6. DASHBOARD LAYOUT & WELCOME HEADER
+       ========================================================================== */
+    .dashboard-main {
+      padding: 28px 0 88px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 56%, #059669 100%);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 28px 30px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .welcome-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(16, 185, 129, 0.25);
+      border: 1px solid rgba(167, 243, 208, 0.45);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .welcome-text h1 {
+      font-size: 1.65rem;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome-text p {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.95rem;
+      max-width: 600px;
+    }
+
+    .welcome-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      min-width: 118px;
+    }
+
+    .stat-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.86);
+      margin-top: 3px;
+    }
+
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      font-size: 1.28rem;
+      letter-spacing: -0.015em;
+      color: var(--text);
+    }
+
+    .section-header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ==========================================================================
+       7. CATEGORY CARDS (4 TARGET GROUPS — ENTREPRENEURS FIRST)
+       ========================================================================== */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .category-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .category-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .category-card.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+
+    .cat-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .cat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+    }
+
+    .featured-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+
+    .cat-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--text);
+    }
+
+    .cat-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       8. ELIGIBILITY / PROFILE FORM CARD
+       ========================================================================== */
+    .card-surface {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.28s ease, border-color 0.28s ease;
+    }
+
+    .eligibility-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px 16px;
+    }
+
+    .eligibility-grid .span-2 {
+      grid-column: span 2;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .form-hint {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       9. SCHEMES FILTER TOOLBAR & RESULTS GRID
+       ========================================================================== */
+    .filter-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.28s ease, border-color 0.28s ease;
+    }
+
+    .search-wrap {
+      flex: 1 1 240px;
+      position: relative;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      pointer-events: none;
+    }
+
+    .search-wrap input {
+      padding-left: 38px;
+    }
+
+    .filter-select {
+      width: auto;
+      min-width: 165px;
+    }
+
+    .saved-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .saved-filter-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .count-pill {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .saved-filter-btn.active .count-pill {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .results-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .schemes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .scheme-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background-color 0.28s ease;
+    }
+
+    .scheme-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-border);
+    }
+
+    .scheme-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .cat-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+    }
+
+    .match-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .match-high {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+
+    .match-partial {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-color: var(--warning-border);
+    }
+
+    .match-low {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+
+    .bookmark-btn {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-light);
+      flex-shrink: 0;
+      transition: all 0.16s ease;
+    }
+
+    .bookmark-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .bookmark-btn.saved {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .scheme-title {
+      font-size: 1.06rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .scheme-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .scheme-benefit {
+      font-size: 0.84rem;
+      background: var(--surface-muted);
+      border-left: 3px solid var(--accent);
+      padding: 8px 11px;
+      border-radius: 0 8px 8px 0;
+      color: var(--text);
+    }
+
+    .match-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .match-bar-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .match-track {
+      height: 7px;
+      background: var(--track-bg);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .match-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .fill-high { background: linear-gradient(90deg, #059669, #10b981); }
+    .fill-partial { background: linear-gradient(90deg, #d97706, #f59e0b); }
+    .fill-low { background: linear-gradient(90deg, #dc2626, #ef4444); }
+
+    .ai-reason {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      background: var(--surface-muted);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+
+    .ai-reason strong {
+      color: var(--primary);
+    }
+
+    .scheme-actions {
+      margin-top: auto;
+      padding-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .scheme-actions .btn {
+      flex: 1;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 46px 20px;
+      background: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    /* ==========================================================================
+       10. SCHEME DETAILS MODAL
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(2, 6, 23, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-strong);
+    }
+
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      z-index: 2;
+    }
+
+    .modal-close {
+      background: var(--surface-muted);
+      border: 1px solid var(--border-strong);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .modal-section h4 {
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .criteria-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .criteria-pill {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      padding: 6px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      color: var(--text);
+    }
+
+    .doc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .doc-list li {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 11px;
+      font-size: 0.86rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+
+    .modal-footer {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    /* ==========================================================================
+       11. FLOATING AI ASSISTANT CHAT BOX
+       ========================================================================== */
+    .chat-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #1d4ed8, #059669);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(29, 78, 216, 0.36);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .chat-fab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(29, 78, 216, 0.44);
+    }
+
+    .chat-panel {
+      position: fixed;
+      right: 22px;
+      bottom: 82px;
+      z-index: 55;
+      width: 370px;
+      max-width: calc(100vw - 28px);
+      height: 500px;
+      max-height: calc(100vh - 110px);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8, #059669);
+      color: #ffffff;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .chat-header-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .chat-header-title strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .chat-header-title small {
+      display: block;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .chat-close-btn {
+      background: rgba(255, 255, 255, 0.16);
+      border: none;
+      color: #ffffff;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .chat-close-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--bg);
+    }
+
+    .chat-msg {
+      max-width: 86%;
+      padding: 10px 13px;
+      border-radius: 12px;
+      font-size: 0.87rem;
+      line-height: 1.48;
+      white-space: pre-line;
+    }
+
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.user {
+      align-self: flex-end;
+      background: #1d4ed8;
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-suggestions {
+      padding: 8px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chat-chip {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chat-chip:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .chat-input-form {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-form input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-muted);
+      color: var(--text);
+      font-size: 0.88rem;
+    }
+
+    .chat-input-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* ==========================================================================
+       12. TOAST NOTIFICATIONS & FOOTER
+       ========================================================================== */
+    .toast-container {
+      position: fixed;
+      top: 78px;
+      right: 20px;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--toast-bg);
+      color: var(--toast-text);
+      padding: 11px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.87rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-strong);
+      border-left: 4px solid var(--accent);
+      animation: fadeSlideIn 0.2s ease;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 20px 0;
+      font-size: 0.84rem;
+      color: var(--text-light);
+      text-align: center;
+      transition: background-color 0.28s ease, border-color 0.28s ease;
+    }
+
+    /* ==========================================================================
+       13. RESPONSIVE BREAKPOINTS (TABLET & MOBILE)
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .schemes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .eligibility-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .eligibility-grid .span-2 {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .auth-shell {
+        grid-template-columns: 1fr;
+      }
+      .auth-hero {
+        padding: 28px 24px;
+      }
+      .auth-panel {
+        padding: 28px 24px;
+      }
+      .nav-links, .user-chip {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .theme-opt span.theme-label {
+        display: none;
+      }
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .schemes-grid {
+        grid-template-columns: 1fr;
+      }
+      .eligibility-grid {
+        grid-template-columns: 1fr;
+      }
+      .eligibility-grid .span-2 {
+        grid-column: span 1;
+      }
+      .doc-list {
+        grid-template-columns: 1fr;
+      }
+      .welcome-banner {
+        padding: 22px 20px;
+      }
+      .chat-panel {
+        right: 14px;
+        bottom: 76px;
+      }
+      .chat-fab {
+        right: 14px;
+        bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- ========================================================================
+       VIEW 1: LOGIN / SIGN-UP SCREEN
+       ======================================================================== -->
+  <section id="authView" class="auth-screen">
+    <!-- Top-right Visual Theme Switcher -->
+    <div class="auth-topbar">
+      <div class="theme-switch" role="group" aria-label="Color theme switcher">
+        <button type="button" class="theme-opt active" data-theme-set="light" aria-pressed="true">
+          <span>☀️</span><span class="theme-label">Light</span>
+        </button>
+        <button type="button" class="theme-opt" data-theme-set="dark" aria-pressed="false">
+          <span>🌙</span><span class="theme-label">Dark</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="auth-shell">
+      <!-- Left Info Panel -->
+      <div class="auth-hero">
+        <div>
+          <div class="brand-lockup">
+            <svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+              <rect width="36" height="36" rx="10" fill="rgba(255,255,255,0.18)"/>
+              <path d="M18 6L28 10.5V17.5C28 23.6 23.7 28.8 18 30.5C12.3 28.8 8 23.6 8 17.5V10.5L18 6Z" stroke="#FFFFFF" stroke-width="2.2" fill="rgba(16,185,129,0.32)"/>
+              <path d="M13.5 18.2L16.6 21.3L23 14.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>SchemeSetu</span>
+            <span class="brand-badge">Founder &amp; Citizen Hub</span>
+          </div>
+          <h1 style="margin-top: 24px;">Unlock Startup Funding &amp; Government Schemes</h1>
+          <p>Built for Indian entrepreneurs, MSMEs, and citizens. Match with collateral-free business loans, seed grants, credit guarantees, scholarships, and rural support in seconds.</p>
+          <ul class="auth-highlights">
+            <li><span>🚀</span> Entrepreneur-first matching: MUDRA, PMEGP, Seed Fund, CGSS &amp; Stand-Up India</li>
+            <li><span>✅</span> Instant match percentage &amp; plain-English AI explanations</li>
+            <li><span>💬</span> Built-in AI Assistant for documents, eligibility &amp; portal steps</li>
+          </ul>
+        </div>
+        <div class="auth-pill-row">
+          <span class="auth-pill primary-pill">🚀 Entrepreneurs</span>
+          <span class="auth-pill">🎓 Students</span>
+          <span class="auth-pill">🌾 Farmers</span>
+          <span class="auth-pill">👴 Senior Citizens</span>
+        </div>
+      </div>
+
+      <!-- Right Auth Form Panel -->
+      <div class="auth-panel">
+        <div class="auth-tabs" role="tablist">
+          <button type="button" id="loginTabBtn" class="auth-tab active" role="tab" aria-selected="true">Log In</button>
+          <button type="button" id="signupTabBtn" class="auth-tab" role="tab" aria-selected="false">Sign Up</button>
+        </div>
+
+        <h2 id="authHeading">Welcome back</h2>
+        <p id="authSubtext" class="auth-subtext">Sign in to access your SchemeSetu dashboard and saved schemes.</p>
+
+        <div id="authError" class="auth-error hidden" role="alert"></div>
+
+        <form id="authForm" novalidate>
+          <div id="signupNameGroup" class="form-group hidden">
+            <label for="authName">Full Name</label>
+            <input type="text" id="authName" class="form-control" placeholder="e.g., Rohan Verma" autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label for="authEmail">Email Address</label>
+            <input type="email" id="authEmail" class="form-control" placeholder="founder@startup.in" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="authPassword">Password (min 6 characters)</label>
+            <input type="password" id="authPassword" class="form-control" placeholder="Enter at least 6 characters" required autocomplete="current-password">
+          </div>
+
+          <button type="submit" id="authSubmitBtn" class="btn btn-primary btn-full">Log In to Dashboard</button>
+        </form>
+
+        <div class="auth-divider">or</div>
+        <button type="button" id="demoLoginBtn" class="btn btn-outline btn-full">🚀 Continue with Demo Founder Account</button>
+
+        <p class="auth-note">Prototype mode: any valid email + 6-character password works. Session &amp; theme are saved locally.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       VIEW 2: MAIN DASHBOARD
+       ======================================================================== -->
+  <div id="dashboardView" class="hidden">
+    <!-- Top Navbar -->
+    <header class="navbar">
+      <div class="container navbar-inner">
+        <a href="#dashboard-top" class="nav-brand">
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="schemesetuGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1D4ED8"/>
+                <stop offset="1" stop-color="#059669"/>
+              </linearGradient>
+            </defs>
+            <rect width="36" height="36" rx="10" fill="url(#schemesetuGrad)"/>
+            <path d="M18 7L27 11V17.4C27 22.8 23.2 27.5 18 29C12.8 27.5 9 22.8 9 17.4V11L18 7Z" stroke="#FFFFFF" stroke-width="2" fill="rgba(255,255,255,0.14)"/>
+            <path d="M14 18.2L16.8 21L22.5 15.2" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>SchemeSetu</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          <button type="button" class="nav-link active" data-nav="dashboard-top">Dashboard</button>
+          <button type="button" class="nav-link" data-nav="schemes-section">Schemes</button>
+          <button type="button" class="nav-link" data-nav="open-ai">AI Assistant</button>
+          <button type="button" class="nav-link" data-nav="profile-section">Profile</button>
+        </nav>
+
+        <div class="nav-actions">
+          <!-- Visual Light / Dark Mode Switcher -->
+          <div class="theme-switch" role="group" aria-label="Color theme switcher">
+            <button type="button" class="theme-opt active" data-theme-set="light" aria-pressed="true" title="Switch to Light Mode">
+              <span>☀️</span><span class="theme-label">Light</span>
+            </button>
+            <button type="button" class="theme-opt" data-theme-set="dark" aria-pressed="false" title="Switch to Dark Mode">
+              <span>🌙</span><span class="theme-label">Dark</span>
+            </button>
+          </div>
+
+          <div class="user-chip" title="Logged in user">
+            <span id="navAvatar" class="user-avatar">R</span>
+            <span id="navUserName">Founder</span>
+          </div>
+          <button type="button" id="logoutBtn" class="btn btn-outline btn-sm">Logout</button>
+          <button type="button" id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">☰</button>
+        </div>
+      </div>
+
+      <!-- Mobile Collapsible Drawer -->
+      <div id="mobileNavDrawer" class="mobile-nav-drawer">
+        <button type="button" class="nav-link" data-nav="dashboard-top">🏠 Dashboard</button>
+        <button type="button" class="nav-link" data-nav="schemes-section">📋 Recommended Schemes</button>
+        <button type="button" class="nav-link" data-nav="open-ai">🤖 AI Assistant</button>
+        <button type="button" class="nav-link" data-nav="profile-section">👤 Eligibility Profile</button>
+      </div>
+    </header>
+
+    <main id="dashboard-top" class="container dashboard-main">
+      <!-- 1. Welcome Header -->
+      <section class="welcome-banner" aria-label="Welcome summary">
+        <div class="welcome-text">
+          <span class="welcome-eyebrow">🚀 Entrepreneur &amp; MSME Priority Hub</span>
+          <h1 id="welcomeTitle">Welcome back, Founder!</h1>
+          <p>Check your eligibility across top Indian startup grants, collateral-free MSME loans, credit guarantees, and citizen welfare schemes.</p>
+        </div>
+        <div class="welcome-stats">
+          <div class="stat-box">
+            <div id="statTotal" class="stat-value">13</div>
+            <div class="stat-label">Total Schemes</div>
+          </div>
+          <div class="stat-box">
+            <div id="statEligible" class="stat-value">0</div>
+            <div class="stat-label">Highly Eligible</div>
+          </div>
+          <div class="stat-box">
+            <div id="statSaved" class="stat-value">0</div>
+            <div class="stat-label">Saved Schemes</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Target Group Category Cards (Entrepreneurs Featured First) -->
+      <section aria-labelledby="categoriesHeading">
+        <div class="section-header">
+          <div>
+            <h2 id="categoriesHeading">Explore by Category</h2>
+            <p>Start with Entrepreneurs &amp; Startups or browse other citizen programs.</p>
+          </div>
+          <button type="button" id="clearCategoryBtn" class="btn btn-ghost btn-sm hidden">Show All Categories</button>
+        </div>
+        <div id="categoryGrid" class="category-grid"></div>
+      </section>
+
+      <!-- 3. Profile & Eligibility Form -->
+      <section id="profile-section" class="card-surface" aria-labelledby="profileHeading">
+        <div class="section-header" style="margin-bottom: 18px;">
+          <div>
+            <h2 id="profileHeading">Your Eligibility Profile</h2>
+            <p>Tailor your details to calculate personalized AI match scores for startup, MSME, and citizen schemes.</p>
+          </div>
+        </div>
+
+        <form id="eligibilityForm">
+          <div class="eligibility-grid">
+            <div class="form-group span-2">
+              <label for="profName">Full Name</label>
+              <input type="text" id="profName" class="form-control" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="profAge">Age (Years)</label>
+              <input type="number" id="profAge" class="form-control" min="0" max="120" placeholder="e.g., 26" required>
+            </div>
+
+            <div class="form-group">
+              <label for="profGender">Gender</label>
+              <select id="profGender" class="form-control" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group span-2">
+              <label for="profState">State / Union Territory</label>
+              <select id="profState" class="form-control" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="profIncome">Annual Income (₹)</label>
+              <input type="number" id="profIncome" class="form-control" min="0" step="10000" placeholder="e.g., 600000" required>
+            </div>
+
+            <div class="form-group">
+              <label for="profCategory">Social Category</label>
+              <select id="profCategory" class="form-control" required>
+                <option value="General">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+              </select>
+            </div>
+
+            <div class="form-group span-2">
+              <label for="profOccupation">Occupation / Primary Group</label>
+              <select id="profOccupation" class="form-control" required>
+                <option value="Entrepreneur">Entrepreneur</option>
+                <option value="Student">Student</option>
+                <option value="Farmer">Farmer</option>
+                <option value="Senior Citizen">Senior Citizen</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <span class="form-hint">💡 Scores update immediately and save automatically to this browser.</span>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="button" id="resetProfileBtn" class="btn btn-outline">Reset Defaults</button>
+              <button type="submit" class="btn btn-accent">✨ Check My Eligibility</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- 4. Recommended Schemes Results Grid -->
+      <section id="schemes-section" aria-labelledby="schemesHeading">
+        <div class="section-header">
+          <div>
+            <h2 id="schemesHeading">Recommended Schemes</h2>
+            <p>Ranked from highest to lowest eligibility match for your profile.</p>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <input type="search" id="schemeSearch" class="form-control" placeholder="Search startup loans, subsidies, documents...">
+          </div>
+
+          <select id="categoryFilter" class="form-control filter-select" aria-label="Filter by category">
+            <option value="All">All Categories</option>
+            <option value="Entrepreneurs">Entrepreneurs</option>
+            <option value="Students">Students</option>
+            <option value="Farmers">Farmers</option>
+            <option value="Senior Citizens">Senior Citizens</option>
+          </select>
+
+          <select id="statusFilter" class="form-control filter-select" aria-label="Filter by eligibility status">
+            <option value="All">All Match Levels</option>
+            <option value="Highly Eligible">Highly Eligible (80%+)</option>
+            <option value="Partially Eligible">Partially Eligible (50–79%)</option>
+            <option value="Not Eligible">Not Eligible (&lt;50%)</option>
+          </select>
+
+          <button type="button" id="savedOnlyBtn" class="btn btn-outline saved-filter-btn">
+            <span>🔖 Saved</span>
+            <span id="savedFilterCount" class="count-pill">0</span>
+          </button>
+        </div>
+
+        <div class="results-meta">
+          <span id="resultsCountText">Showing 13 schemes</span>
+          <button type="button" id="resetFiltersBtn" class="btn btn-ghost btn-sm hidden">Reset Filters</button>
+        </div>
+
+        <div id="schemesGrid" class="schemes-grid"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        SchemeSetu Prototype — Entrepreneur &amp; Citizen Government Scheme Discovery. Always verify final guidelines on the official government portals linked on each scheme.
+      </div>
+    </footer>
+
+    <!-- ======================================================================
+         5. SCHEME DETAILS MODAL
+         ====================================================================== -->
+    <div id="detailsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <div id="modalBadges" class="badge-row" style="margin-bottom: 8px;"></div>
+            <h3 id="modalTitle" style="font-size: 1.25rem; line-height: 1.3;">Scheme Name</h3>
+          </div>
+          <button type="button" id="closeModalBtn" class="modal-close" aria-label="Close modal">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p id="modalDesc" style="color: var(--text-muted); font-size: 0.94rem;"></p>
+
+          <div id="modalAiReason" class="ai-reason"></div>
+
+          <div class="modal-section">
+            <h4>Key Benefits</h4>
+            <div id="modalBenefits" class="scheme-benefit" style="font-size: 0.92rem;"></div>
+          </div>
+
+          <div class="modal-section">
+            <h4>Eligibility Rules</h4>
+            <div id="modalCriteria" class="criteria-pills"></div>
+          </div>
+
+          <div class="modal-section">
+            <h4>Required Documents</h4>
+            <ul id="modalDocuments" class="doc-list"></ul>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="modalSaveBtn" class="btn btn-outline">🔖 Save Scheme</button>
+          <a id="modalApplyLink" href="https://www.myscheme.gov.in/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Apply on Official Portal ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         6. FLOATING AI ASSISTANT CHAT BOX
+         ====================================================================== -->
+    <button type="button" id="chatFab" class="chat-fab" aria-label="Open SchemeSetu AI Assistant">
+      <span>🤖</span>
+      <span>AI Assistant</span>
+    </button>
+
+    <aside id="chatPanel" class="chat-panel hidden" aria-label="SchemeSetu AI Assistant Chat">
+      <div class="chat-header">
+        <div class="chat-header-title">
+          <span style="font-size: 1.35rem;">🤖</span>
+          <div>
+            <strong>SchemeSetu AI Assistant</strong>
+            <small>Startup funding, MSME loans &amp; scheme help</small>
+          </div>
+        </div>
+        <button type="button" id="chatCloseBtn" class="chat-close-btn" aria-label="Close AI Assistant">✕</button>
+      </div>
+
+      <div id="chatMessages" class="chat-messages"></div>
+
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button type="button" class="chat-chip" data-q="What are my top eligible schemes?">My top matches</button>
+        <button type="button" class="chat-chip" data-q="Show entrepreneur and startup funding schemes">Startup loans &amp; grants</button>
+        <button type="button" class="chat-chip" data-q="What documents do entrepreneurs need?">Documents needed</button>
+        <button type="button" class="chat-chip" data-q="How do I apply for a scheme?">How to apply</button>
+      </div>
+
+      <form id="chatForm" class="chat-input-form">
+        <input type="text" id="chatInput" placeholder="Ask about Mudra, PMEGP, Seed Fund, docs..." autocomplete="off">
+        <button type="submit" class="btn btn-primary btn-sm">Send</button>
+      </form>
+    </aside>
+  </div>
+
+  <!-- ========================================================================
+       JAVASCRIPT: DATA, THEME SWITCHER, MATCHING ENGINE, AUTH, UI & AI CHATBOT
+       ======================================================================== -->
+  <script>
+    (function () {
+      "use strict";
+
+      /* ----------------------------------------------------------------------
+         1. SAFE STORAGE HELPER (localStorage with in-memory fallback)
+         ---------------------------------------------------------------------- */
+      const memoryStore = {};
+      const Storage = {
+        get(key) {
+          try {
+            const raw = window.localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+          } catch (e) {
+            return memoryStore[key] || null;
+          }
+        },
+        set(key, value) {
+          memoryStore[key] = value;
+          try {
+            window.localStorage.setItem(key, JSON.stringify(value));
+          } catch (e) {
+            /* Fallback stays in memoryStore */
+          }
+        },
+        remove(key) {
+          delete memoryStore[key];
+          try {
+            window.localStorage.removeItem(key);
+          } catch (e) {
+            /* Ignore */
+          }
+        }
+      };
+
+      /* ----------------------------------------------------------------------
+         2. INDIAN STATES & CATEGORIES METADATA (Entrepreneurs First, No Women's)
+         ---------------------------------------------------------------------- */
+      const INDIAN_STATES = [
+        "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+        "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+        "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+        "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+        "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+        "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi (NCT)", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+      ];
+
+      const CATEGORY_META = [
+        { id: "Entrepreneurs", icon: "🚀", tagline: "Business loans, subsidies & startup grants", featured: true },
+        { id: "Students", icon: "🎓", tagline: "Scholarships & higher education loans" },
+        { id: "Farmers", icon: "🌾", tagline: "Income support, credit & crop insurance" },
+        { id: "Senior Citizens", icon: "👴", tagline: "Pensions & high-interest savings" }
+      ];
+
+      /* ----------------------------------------------------------------------
+         3. HARD-CODED GOVERNMENT SCHEME DATASET (13 SCHEMES — 5 ENTREPRENEUR)
+            Edit or add objects in SCHEMES_DATA below to update the platform.
+         ---------------------------------------------------------------------- */
+      const SCHEMES_DATA = [
+        // --- ENTREPRENEURS (PRIMARY FOCUS) ---
+        {
+          id: "pmmy",
+          name: "PM Mudra Yojana (PMMY)",
+          category: "Entrepreneurs",
+          description: "Collateral-free micro-business loans supporting non-farm manufacturing, trading, and service enterprises through banks and NBFCs.",
+          benefits: "Loans up to ₹20 lakh across Shishu (up to ₹50k), Kishore (up to ₹5L), Tarun (up to ₹10L), and Tarun Plus (up to ₹20L).",
+          rules: { minAge: 18, maxAge: 65, maxIncome: 2500000, gender: "All", occupation: ["Entrepreneur", "Other"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "PAN Card", "Business Plan / Project Report", "Business Address Proof", "Bank Account Statement"],
+          applyLink: "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2069170&reg=3&lang=2"
+        },
+        {
+          id: "sisfs",
+          name: "Startup India Seed Fund Scheme (SISFS)",
+          category: "Entrepreneurs",
+          description: "Early-stage capital program by DPIIT providing grants and debt support to recognized Indian startups through empanelled incubators.",
+          benefits: "Up to ₹20 lakh grant for proof of concept/prototype development and up to ₹50 lakh debt/convertible funding for market entry.",
+          rules: { minAge: 18, maxAge: 60, maxIncome: 5000000, gender: "All", occupation: ["Entrepreneur", "Student"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["DPIIT Recognition Certificate", "Company Incorporation Certificate", "Startup Pitch Deck", "Founder Aadhaar & PAN"],
+          applyLink: "https://seedfund.startupindia.gov.in/"
+        },
+        {
+          id: "pmegp",
+          name: "PM's Employment Generation Programme (PMEGP)",
+          category: "Entrepreneurs",
+          description: "Credit-linked subsidy program helping entrepreneurs set up new non-farm micro enterprises in manufacturing and service sectors.",
+          benefits: "15%–35% margin money subsidy on project costs up to ₹50 lakh (manufacturing) and ₹20 lakh (services), with bank financing for the balance.",
+          rules: { minAge: 18, maxAge: 65, maxIncome: 5000000, gender: "All", occupation: ["Entrepreneur", "Other"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar & Address Proof", "Educational Qualification Certificate", "Detailed Project Report (DPR)", "Caste Certificate (if applicable)", "Bank Account Details"],
+          applyLink: "https://www.myscheme.gov.in/schemes/pmegp"
+        },
+        {
+          id: "cgss",
+          name: "Credit Guarantee Scheme for Startups (CGSS)",
+          category: "Entrepreneurs",
+          description: "DPIIT-backed credit guarantee scheme enabling DPIIT-recognised startups to raise collateral-free debt funding from member lenders.",
+          benefits: "Government credit guarantee cover on debt facilities up to ₹20 crore per eligible startup (up to 85% cover for loans up to ₹10 crore).",
+          rules: { minAge: 18, maxAge: 65, maxIncome: 10000000, gender: "All", occupation: ["Entrepreneur"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["DPIIT Startup Recognition Number", "Entity PAN & Udyam Registration", "Business Project Report", "Bank KYC & Financial Statements"],
+          applyLink: "https://www.myscheme.gov.in/schemes/cgss"
+        },
+        {
+          id: "standup-india",
+          name: "Stand-Up India",
+          category: "Entrepreneurs",
+          description: "Flagship entrepreneurship financing scheme empowering SC/ST and women entrepreneurs to launch new greenfield enterprises.",
+          benefits: "Bank loans between ₹10 lakh and ₹1 crore for manufacturing, services, agri-allied, or trading greenfield ventures.",
+          rules: { minAge: 18, maxAge: 65, maxIncome: 2500000, gender: "FemaleOrSCST", occupation: ["Entrepreneur"], categories: ["SC", "ST", "General", "OBC"] },
+          documents: ["Aadhaar Card", "PAN Card", "Caste Certificate (if SC/ST)", "Greenfield Project Report", "Bank & Address Proof"],
+          applyLink: "https://www.myscheme.gov.in/schemes/sui"
+        },
+
+        // --- STUDENTS ---
+        {
+          id: "nsp",
+          name: "National Scholarship Portal (NSP)",
+          category: "Students",
+          description: "Unified national digital portal offering central and state government scholarships for school and college students via One Time Registration (OTR).",
+          benefits: "Direct bank transfer covering tuition fees and maintenance allowances across merit-based and means-based central schemes.",
+          rules: { minAge: 14, maxAge: 30, maxIncome: 800000, gender: "All", occupation: ["Student"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card (for OTR)", "Family Income Certificate", "Previous Year Marksheet", "Bank Account Passbook", "Institution Bonafide Certificate"],
+          applyLink: "https://scholarships.gov.in/"
+        },
+        {
+          id: "pm-vidyalaxmi",
+          name: "PM-Vidyalaxmi (Education Loan)",
+          category: "Students",
+          description: "Single-window national portal helping students apply for collateral-free education loans for higher studies in India and abroad.",
+          benefits: "Easy access to bank education loans with interest subvention support for eligible students pursuing quality higher education.",
+          rules: { minAge: 17, maxAge: 35, maxIncome: 800000, gender: "All", occupation: ["Student"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "PAN Card", "Address Proof", "College Admission Letter", "Family Income Proof"],
+          applyLink: "https://pmvidyalaxmi.co.in/"
+        },
+        {
+          id: "post-matric",
+          name: "Post Matric Scholarship",
+          category: "Students",
+          description: "Centrally sponsored scholarship supporting students from SC, ST, and OBC communities pursuing post-matriculation and higher education.",
+          benefits: "Reimbursement of compulsory non-refundable fees plus monthly maintenance allowance (₹230 to ₹1,200/month depending on course).",
+          rules: { minAge: 15, maxAge: 30, maxIncome: 250000, gender: "All", occupation: ["Student"], categories: ["SC", "ST", "OBC"] },
+          documents: ["Aadhaar Card", "Caste Certificate", "Family Income Certificate", "Qualifying Exam Marksheet", "Current Fee Receipt", "Bank Passbook"],
+          applyLink: "https://www.myscheme.gov.in/schemes/pmsfss"
+        },
+
+        // --- FARMERS ---
+        {
+          id: "pm-kisan",
+          name: "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+          category: "Farmers",
+          description: "Central sector scheme providing direct financial income support to eligible landholding farmer families across India.",
+          benefits: "₹6,000 per year transferred directly into Aadhaar-linked bank accounts in three equal ₹2,000 installments.",
+          rules: { minAge: 18, maxAge: 99, maxIncome: 500000, gender: "All", occupation: ["Farmer"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "Land Ownership Records (Khasra/Khatauni)", "Bank Account Passbook", "Active Mobile Number"],
+          applyLink: "https://pmkisan.gov.in/"
+        },
+        {
+          id: "kcc",
+          name: "Kisan Credit Card (KCC)",
+          category: "Farmers",
+          description: "Credit facility giving farmers timely and affordable short-term working capital for seeds, fertilizers, cultivation, and allied activities.",
+          benefits: "Flexible revolving agricultural credit limit based on landholding with subsidized interest rates on prompt repayment.",
+          rules: { minAge: 18, maxAge: 75, maxIncome: 1000000, gender: "All", occupation: ["Farmer"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "Land Record (7/12 or Khasra)", "Passport-size Photographs", "Bank KYC Documents"],
+          applyLink: "https://www.myscheme.gov.in/schemes/kcc"
+        },
+        {
+          id: "pmfby",
+          name: "PM Fasal Bima Yojana (PMFBY)",
+          category: "Farmers",
+          description: "Government-sponsored crop insurance scheme shielding farmers from financial losses due to natural calamities, pests, or diseases.",
+          benefits: "Comprehensive crop insurance coverage at low farmer premium rates with fast claim settlement directly to bank accounts.",
+          rules: { minAge: 18, maxAge: 80, maxIncome: 1500000, gender: "All", occupation: ["Farmer"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "Land Record (7/12)", "Bank Passbook", "Crop Sowing Certificate"],
+          applyLink: "https://pmfby.gov.in/"
+        },
+
+        // --- SENIOR CITIZENS ---
+        {
+          id: "ignoaps",
+          name: "Indira Gandhi National Old Age Pension (IGNOAPS)",
+          category: "Senior Citizens",
+          description: "Sub-scheme of the National Social Assistance Programme (NSAP) offering monthly pension support to elderly citizens from BPL households.",
+          benefits: "Assured monthly social assistance pension paid directly into bank or post office accounts, often topped up by state governments.",
+          rules: { minAge: 60, maxAge: 120, maxIncome: 150000, gender: "All", occupation: ["Senior Citizen", "Other"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "Age Proof / Birth Certificate", "BPL / Income Certificate", "Bank or Post Office Passbook"],
+          applyLink: "https://www.myscheme.gov.in/schemes/nsap-ignoaps"
+        },
+        {
+          id: "scss",
+          name: "Senior Citizen Savings Scheme (SCSS)",
+          category: "Senior Citizens",
+          description: "Low-risk government-backed savings account available at post offices and authorized banks for Indian citizens aged 60 and above.",
+          benefits: "Attractive 8.2% annual interest paid quarterly, 5-year tenure (extendable by 3 years), and Section 80C tax deduction up to ₹1.5 lakh.",
+          rules: { minAge: 60, maxAge: 120, maxIncome: 5000000, gender: "All", occupation: ["Senior Citizen", "Other"], categories: ["General", "OBC", "SC", "ST"] },
+          documents: ["Aadhaar Card", "PAN Card", "Senior Citizen Card / Age Proof", "Address Proof", "2 Passport-size Photographs"],
+          applyLink: "https://www.myscheme.gov.in/schemes/scss"
+        }
+      ];
+
+      /* ----------------------------------------------------------------------
+         4. APPLICATION STATE (Entrepreneur-focused defaults + Theme persistence)
+         ---------------------------------------------------------------------- */
+      const DEFAULT_PROFILE = {
+        name: "Rohan Verma",
+        age: 26,
+        gender: "Male",
+        state: "Madhya Pradesh",
+        income: 600000,
+        category: "General",
+        occupation: "Entrepreneur"
+      };
+
+      const savedProfileRaw = Storage.get("schemesetu_profile");
+      const validOccupations = ["Entrepreneur", "Student", "Farmer", "Senior Citizen", "Other"];
+      const initialProfile = savedProfileRaw && validOccupations.includes(savedProfileRaw.occupation)
+        ? savedProfileRaw
+        : { ...DEFAULT_PROFILE };
+
+      const validSchemeIds = new Set(SCHEMES_DATA.map((s) => s.id));
+      const initialSaved = (Array.isArray(Storage.get("schemesetu_saved")) ? Storage.get("schemesetu_saved") : [])
+        .filter((id) => validSchemeIds.has(id));
+
+      const state = {
+        theme: Storage.get("schemesetu_theme") === "dark" ? "dark" : "light",
+        authMode: "login",
+        session: Storage.get("schemesetu_session"),
+        profile: initialProfile,
+        savedIds: initialSaved,
+        filters: {
+          search: "",
+          category: "All",
+          status: "All",
+          savedOnly: false
+        },
+        activeModalSchemeId: null,
+        chatInitialized: false
+      };
+
+      /* ----------------------------------------------------------------------
+         5. DOM REFERENCES
+         ---------------------------------------------------------------------- */
+      const el = {
+        toastContainer: document.getElementById("toastContainer"),
+        authView: document.getElementById("authView"),
+        dashboardView: document.getElementById("dashboardView"),
+        loginTabBtn: document.getElementById("loginTabBtn"),
+        signupTabBtn: document.getElementById("signupTabBtn"),
+        authHeading: document.getElementById("authHeading"),
+        authSubtext: document.getElementById("authSubtext"),
+        authError: document.getElementById("authError"),
+        authForm: document.getElementById("authForm"),
+        signupNameGroup: document.getElementById("signupNameGroup"),
+        authName: document.getElementById("authName"),
+        authEmail: document.getElementById("authEmail"),
+        authPassword: document.getElementById("authPassword"),
+        authSubmitBtn: document.getElementById("authSubmitBtn"),
+        demoLoginBtn: document.getElementById("demoLoginBtn"),
+
+        navAvatar: document.getElementById("navAvatar"),
+        navUserName: document.getElementById("navUserName"),
+        logoutBtn: document.getElementById("logoutBtn"),
+        mobileMenuBtn: document.getElementById("mobileMenuBtn"),
+        mobileNavDrawer: document.getElementById("mobileNavDrawer"),
+
+        welcomeTitle: document.getElementById("welcomeTitle"),
+        statTotal: document.getElementById("statTotal"),
+        statEligible: document.getElementById("statEligible"),
+        statSaved: document.getElementById("statSaved"),
+
+        categoryGrid: document.getElementById("categoryGrid"),
+        clearCategoryBtn: document.getElementById("clearCategoryBtn"),
+
+        eligibilityForm: document.getElementById("eligibilityForm"),
+        profName: document.getElementById("profName"),
+        profAge: document.getElementById("profAge"),
+        profGender: document.getElementById("profGender"),
+        profState: document.getElementById("profState"),
+        profIncome: document.getElementById("profIncome"),
+        profCategory: document.getElementById("profCategory"),
+        profOccupation: document.getElementById("profOccupation"),
+        resetProfileBtn: document.getElementById("resetProfileBtn"),
+
+        schemeSearch: document.getElementById("schemeSearch"),
+        categoryFilter: document.getElementById("categoryFilter"),
+        statusFilter: document.getElementById("statusFilter"),
+        savedOnlyBtn: document.getElementById("savedOnlyBtn"),
+        savedFilterCount: document.getElementById("savedFilterCount"),
+        resultsCountText: document.getElementById("resultsCountText"),
+        resetFiltersBtn: document.getElementById("resetFiltersBtn"),
+        schemesGrid: document.getElementById("schemesGrid"),
+
+        detailsModal: document.getElementById("detailsModal"),
+        closeModalBtn: document.getElementById("closeModalBtn"),
+        modalBadges: document.getElementById("modalBadges"),
+        modalTitle: document.getElementById("modalTitle"),
+        modalDesc: document.getElementById("modalDesc"),
+        modalAiReason: document.getElementById("modalAiReason"),
+        modalBenefits: document.getElementById("modalBenefits"),
+        modalCriteria: document.getElementById("modalCriteria"),
+        modalDocuments: document.getElementById("modalDocuments"),
+        modalSaveBtn: document.getElementById("modalSaveBtn"),
+        modalApplyLink: document.getElementById("modalApplyLink"),
+
+        chatFab: document.getElementById("chatFab"),
+        chatPanel: document.getElementById("chatPanel"),
+        chatCloseBtn: document.getElementById("chatCloseBtn"),
+        chatMessages: document.getElementById("chatMessages"),
+        chatSuggestions: document.getElementById("chatSuggestions"),
+        chatForm: document.getElementById("chatForm"),
+        chatInput: document.getElementById("chatInput")
+      };
+
+      /* ----------------------------------------------------------------------
+         6. THEME SWITCHER (LIGHT / DARK MODE WITH VISUAL SYNC)
+         ---------------------------------------------------------------------- */
+      function applyTheme(theme, notify) {
+        const nextTheme = theme === "dark" ? "dark" : "light";
+        state.theme = nextTheme;
+        document.documentElement.setAttribute("data-theme", nextTheme);
+        Storage.set("schemesetu_theme", nextTheme);
+
+        document.querySelectorAll("[data-theme-set]").forEach((btn) => {
+          const isSelected = btn.dataset.themeSet === nextTheme;
+          btn.classList.toggle("active", isSelected);
+          btn.setAttribute("aria-pressed", String(isSelected));
+        });
+
+        if (notify) {
+          showToast(nextTheme === "dark" ? "🌙 Switched to Dark Mode" : "☀️ Switched to Light Mode");
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         7. UTILITY HELPERS
+         ---------------------------------------------------------------------- */
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function formatRupees(amount) {
+        const num = Number(amount) || 0;
+        if (num >= 10000000) {
+          const cr = num / 10000000;
+          return "₹" + (Number.isInteger(cr) ? cr : cr.toFixed(1)) + " Crore";
+        }
+        if (num >= 100000) {
+          const lakhs = num / 100000;
+          return "₹" + (Number.isInteger(lakhs) ? lakhs : lakhs.toFixed(1)) + " Lakh";
+        }
+        return "₹" + num.toLocaleString("en-IN");
+      }
+
+      function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.textContent = message;
+        el.toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transition = "opacity 0.25s ease";
+          setTimeout(() => toast.remove(), 260);
+        }, 2600);
+      }
+
+      /* ----------------------------------------------------------------------
+         8. AI ELIGIBILITY MATCHING ENGINE
+         ---------------------------------------------------------------------- */
+      function evaluateScheme(scheme, profile) {
+        const r = scheme.rules;
+        const age = Number(profile.age) || 0;
+        const income = Number(profile.income) || 0;
+        const gender = profile.gender || "Male";
+        const occupation = profile.occupation || "Entrepreneur";
+        const category = profile.category || "General";
+
+        let score = 0;
+        const matchedReasons = [];
+        const missedReasons = [];
+
+        // 1. Occupation Match (30 points)
+        const occOpen = r.occupation.includes("All");
+        if (occOpen) {
+          score += 28;
+          matchedReasons.push("open to all occupations");
+        } else if (r.occupation.includes(occupation)) {
+          score += 30;
+          matchedReasons.push("matches your " + occupation + " profile");
+        } else {
+          missedReasons.push("designed for " + r.occupation.join(" / "));
+        }
+
+        // 2. Age Match (25 points)
+        if (age >= r.minAge && age <= r.maxAge) {
+          score += 25;
+          matchedReasons.push("age (" + age + ") fits " + r.minAge + "–" + (r.maxAge >= 120 ? "60+" : r.maxAge) + " yrs");
+        } else if (age >= r.minAge - 3 && age <= r.maxAge + 3) {
+          score += 12;
+          missedReasons.push("age (" + age + ") is slightly outside " + r.minAge + "–" + r.maxAge + " yrs");
+        } else {
+          missedReasons.push("requires age " + r.minAge + (r.maxAge >= 120 ? "+" : "–" + r.maxAge) + " yrs");
+        }
+
+        // 3. Income Match (25 points)
+        if (income <= r.maxIncome) {
+          score += 25;
+          matchedReasons.push("income is within " + formatRupees(r.maxIncome) + " limit");
+        } else if (income <= r.maxIncome * 1.25) {
+          score += 10;
+          missedReasons.push("income slightly exceeds " + formatRupees(r.maxIncome));
+        } else {
+          missedReasons.push("income exceeds " + formatRupees(r.maxIncome) + " limit");
+        }
+
+        // 4. Gender & Social Category Match (20 points)
+        let demoOk = true;
+        if (r.gender === "FemaleOrSCST") {
+          if (gender === "Female" || category === "SC" || category === "ST") {
+            score += 20;
+            matchedReasons.push("meets SC/ST or women founder priority");
+          } else {
+            demoOk = false;
+            missedReasons.push("reserved for SC/ST or women founders");
+          }
+        } else {
+          const genderOk = r.gender === "All" || r.gender === gender;
+          const catOk = r.categories.includes(category);
+          if (genderOk && catOk) {
+            score += 20;
+            if (r.categories.length < 4) matchedReasons.push("supports " + category + " category");
+          } else {
+            demoOk = false;
+            if (!genderOk) missedReasons.push("for " + r.gender + " applicants");
+            if (!catOk) missedReasons.push("for " + r.categories.join("/") + " categories");
+          }
+        }
+
+        score = Math.max(0, Math.min(100, Math.round(score)));
+
+        let status = "Not Eligible";
+        let badgeClass = "match-low";
+        let fillClass = "fill-low";
+        if (score >= 80 && demoOk) {
+          status = "Highly Eligible";
+          badgeClass = "match-high";
+          fillClass = "fill-high";
+        } else if (score >= 50) {
+          status = "Partially Eligible";
+          badgeClass = "match-partial";
+          fillClass = "fill-partial";
+        }
+
+        let explanation = "";
+        if (status === "Highly Eligible") {
+          explanation = "Strong fit: " + matchedReasons.slice(0, 3).join(", ") + ".";
+        } else if (status === "Partially Eligible") {
+          explanation = "Partial fit: " + (missedReasons[0] ? "misses " + missedReasons[0] : "check scheme guidelines") +
+            (matchedReasons[0] ? ", though it " + matchedReasons[0] : "") + ".";
+        } else {
+          explanation = "Low match: " + missedReasons.slice(0, 2).join(" and ") + ".";
+        }
+
+        return { score, status, badgeClass, fillClass, explanation };
+      }
+
+      function getEvaluatedSchemes() {
+        return SCHEMES_DATA.map((scheme) => ({
+          ...scheme,
+          match: evaluateScheme(scheme, state.profile)
+        })).sort((a, b) => b.match.score - a.match.score);
+      }
+
+      /* ----------------------------------------------------------------------
+         9. AUTHENTICATION FLOW (Login / Sign-up / Route Guard / Logout)
+         ---------------------------------------------------------------------- */
+      function setAuthMode(mode) {
+        state.authMode = mode;
+        const isSignup = mode === "signup";
+        el.loginTabBtn.classList.toggle("active", !isSignup);
+        el.signupTabBtn.classList.toggle("active", isSignup);
+        el.loginTabBtn.setAttribute("aria-selected", String(!isSignup));
+        el.signupTabBtn.setAttribute("aria-selected", String(isSignup));
+        el.signupNameGroup.classList.toggle("hidden", !isSignup);
+        el.authHeading.textContent = isSignup ? "Create your founder account" : "Welcome back";
+        el.authSubtext.textContent = isSignup
+          ? "Sign up to save schemes and get personalized entrepreneur & citizen matches."
+          : "Sign in to access your SchemeSetu dashboard and saved schemes.";
+        el.authSubmitBtn.textContent = isSignup ? "Create Account & Continue" : "Log In to Dashboard";
+        el.authError.classList.add("hidden");
+      }
+
+      function showAuthError(msg) {
+        el.authError.textContent = msg;
+        el.authError.classList.remove("hidden");
+      }
+
+      function completeLogin(email, name) {
+        const displayName = (name && name.trim()) || email.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+        state.session = {
+          name: displayName,
+          email: email.trim(),
+          loggedInAt: new Date().toISOString()
+        };
+        Storage.set("schemesetu_session", state.session);
+
+        if (!Storage.get("schemesetu_profile") || state.profile.name === DEFAULT_PROFILE.name) {
+          state.profile.name = displayName;
+          Storage.set("schemesetu_profile", state.profile);
+        }
+
+        renderRoute();
+        showToast("Welcome to SchemeSetu, " + displayName + "!");
+      }
+
+      function handleLogout() {
+        Storage.remove("schemesetu_session");
+        state.session = null;
+        el.authForm.reset();
+        el.authError.classList.add("hidden");
+        el.chatPanel.classList.add("hidden");
+        el.detailsModal.classList.add("hidden");
+        renderRoute();
+        showToast("You have been logged out.");
+      }
+
+      function renderRoute() {
+        if (!state.session) {
+          el.dashboardView.classList.add("hidden");
+          el.authView.classList.remove("hidden");
+          if (window.location.hash === "#dashboard") {
+            history.replaceState(null, "", "#login");
+          }
+          return;
+        }
+
+        el.authView.classList.add("hidden");
+        el.dashboardView.classList.remove("hidden");
+        syncDashboardUI();
+      }
+
+      /* ----------------------------------------------------------------------
+         10. DASHBOARD RENDERING
+         ---------------------------------------------------------------------- */
+      function populateStatesDropdown() {
+        el.profState.innerHTML = INDIAN_STATES.map(
+          (st) => `<option value="${escapeHtml(st)}">${escapeHtml(st)}</option>`
+        ).join("");
+      }
+
+      function populateProfileForm() {
+        el.profName.value = state.profile.name || "";
+        el.profAge.value = state.profile.age ?? "";
+        el.profGender.value = state.profile.gender || "Male";
+        el.profState.value = state.profile.state || "Madhya Pradesh";
+        el.profIncome.value = state.profile.income ?? "";
+        el.profCategory.value = state.profile.category || "General";
+        el.profOccupation.value = state.profile.occupation || "Entrepreneur";
+      }
+
+      function renderCategories() {
+        el.categoryGrid.innerHTML = CATEGORY_META.map((cat) => {
+          const count = SCHEMES_DATA.filter((s) => s.category === cat.id).length;
+          const isActive = state.filters.category === cat.id;
+          return `
+            <button type="button" class="category-card ${isActive ? "active" : ""}" data-cat="${escapeHtml(cat.id)}">
+              <div class="cat-top-row">
+                <span class="cat-icon" aria-hidden="true">${cat.icon}</span>
+                ${cat.featured ? '<span class="featured-tag">Primary Focus</span>' : ""}
+              </div>
+              <span class="cat-title">${escapeHtml(cat.id)}</span>
+              <span class="cat-meta">${count} schemes · ${escapeHtml(cat.tagline)}</span>
+            </button>
+          `;
+        }).join("");
+
+        el.clearCategoryBtn.classList.toggle("hidden", state.filters.category === "All");
+      }
+
+      function renderSchemes() {
+        const evaluated = getEvaluatedSchemes();
+
+        const highlyCount = evaluated.filter((s) => s.match.status === "Highly Eligible").length;
+        el.statTotal.textContent = String(SCHEMES_DATA.length);
+        el.statEligible.textContent = String(highlyCount);
+        el.statSaved.textContent = String(state.savedIds.length);
+        el.savedFilterCount.textContent = String(state.savedIds.length);
+        el.savedOnlyBtn.classList.toggle("active", state.filters.savedOnly);
+
+        const q = state.filters.search.trim().toLowerCase();
+        const filtered = evaluated.filter((s) => {
+          if (state.filters.category !== "All" && s.category !== state.filters.category) return false;
+          if (state.filters.status !== "All" && s.match.status !== state.filters.status) return false;
+          if (state.filters.savedOnly && !state.savedIds.includes(s.id)) return false;
+          if (q) {
+            const haystack = [s.name, s.category, s.description, s.benefits, s.documents.join(" ")].join(" ").toLowerCase();
+            if (!haystack.includes(q)) return false;
+          }
+          return true;
+        });
+
+        const hasActiveFilters = q !== "" || state.filters.category !== "All" || state.filters.status !== "All" || state.filters.savedOnly;
+        el.resetFiltersBtn.classList.toggle("hidden", !hasActiveFilters);
+        el.resultsCountText.textContent = `Showing ${filtered.length} of ${SCHEMES_DATA.length} schemes` +
+          (state.filters.category !== "All" ? ` in ${state.filters.category}` : "") +
+          (state.filters.savedOnly ? " (Saved only)" : "");
+
+        if (filtered.length === 0) {
+          el.schemesGrid.innerHTML = `
+            <div class="empty-state">
+              <h3>No matching schemes found</h3>
+              <p>Try clearing your search, switching categories, or updating your eligibility profile above.</p>
+            </div>
+          `;
+          return;
+        }
+
+        el.schemesGrid.innerHTML = filtered.map((s) => {
+          const isSaved = state.savedIds.includes(s.id);
+          return `
+            <article class="scheme-card">
+              <div class="scheme-top">
+                <div class="badge-row">
+                  <span class="cat-badge">${escapeHtml(s.category)}</span>
+                  <span class="match-badge ${s.match.badgeClass}">${escapeHtml(s.match.status)}</span>
+                </div>
+                <button
+                  type="button"
+                  class="bookmark-btn ${isSaved ? "saved" : ""}"
+                  data-action="bookmark"
+                  data-id="${escapeHtml(s.id)}"
+                  title="${isSaved ? "Remove from saved schemes" : "Save scheme"}"
+                  aria-label="${isSaved ? "Remove " + escapeHtml(s.name) + " from saved" : "Save " + escapeHtml(s.name)}"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="${isSaved ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <h3 class="scheme-title">${escapeHtml(s.name)}</h3>
+              <p class="scheme-desc">${escapeHtml(s.description)}</p>
+              <div class="scheme-benefit"><strong>Benefit:</strong> ${escapeHtml(s.benefits)}</div>
+
+              <div class="match-bar-wrap">
+                <div class="match-bar-head">
+                  <span>Eligibility Match</span>
+                  <span>${s.match.score}%</span>
+                </div>
+                <div class="match-track">
+                  <div class="match-fill ${s.match.fillClass}" style="width: ${s.match.score}%"></div>
+                </div>
+              </div>
+
+              <div class="ai-reason"><strong>AI Match:</strong> ${escapeHtml(s.match.explanation)}</div>
+
+              <div class="scheme-actions">
+                <button type="button" class="btn btn-outline btn-sm" data-action="details" data-id="${escapeHtml(s.id)}">View Details</button>
+                <a href="${escapeHtml(s.applyLink)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Apply ↗</a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function syncDashboardUI() {
+        const displayName = state.profile.name || (state.session && state.session.name) || "Founder";
+        el.navUserName.textContent = displayName;
+        el.navAvatar.textContent = displayName.charAt(0).toUpperCase();
+        el.welcomeTitle.textContent = "Welcome back, " + displayName + "!";
+
+        populateProfileForm();
+        el.categoryFilter.value = state.filters.category;
+        el.statusFilter.value = state.filters.status;
+        renderCategories();
+        renderSchemes();
+
+        if (!state.chatInitialized) {
+          initChatWelcome();
+          state.chatInitialized = true;
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         11. BOOKMARK & DETAILS MODAL
+         ---------------------------------------------------------------------- */
+      function toggleSaveScheme(schemeId) {
+        const idx = state.savedIds.indexOf(schemeId);
+        const scheme = SCHEMES_DATA.find((s) => s.id === schemeId);
+        if (idx >= 0) {
+          state.savedIds.splice(idx, 1);
+          showToast("Removed " + (scheme ? scheme.name : "scheme") + " from saved.");
+        } else {
+          state.savedIds.push(schemeId);
+          showToast("Saved " + (scheme ? scheme.name : "scheme") + " to bookmarks.");
+        }
+        Storage.set("schemesetu_saved", state.savedIds);
+        renderSchemes();
+        if (state.activeModalSchemeId === schemeId) {
+          updateModalSaveButton(schemeId);
+        }
+      }
+
+      function updateModalSaveButton(schemeId) {
+        const isSaved = state.savedIds.includes(schemeId);
+        el.modalSaveBtn.textContent = isSaved ? "✓ Saved in Bookmarks" : "🔖 Save Scheme";
+        el.modalSaveBtn.classList.toggle("btn-accent", isSaved);
+        el.modalSaveBtn.classList.toggle("btn-outline", !isSaved);
+      }
+
+      function openDetailsModal(schemeId) {
+        const scheme = SCHEMES_DATA.find((s) => s.id === schemeId);
+        if (!scheme) return;
+
+        const match = evaluateScheme(scheme, state.profile);
+        state.activeModalSchemeId = schemeId;
+
+        el.modalBadges.innerHTML = `
+          <span class="cat-badge">${escapeHtml(scheme.category)}</span>
+          <span class="match-badge ${match.badgeClass}">${escapeHtml(match.status)} · ${match.score}%</span>
+        `;
+        el.modalTitle.textContent = scheme.name;
+        el.modalDesc.textContent = scheme.description;
+        el.modalAiReason.innerHTML = `<strong>AI Eligibility Analysis:</strong> ${escapeHtml(match.explanation)}`;
+        el.modalBenefits.textContent = scheme.benefits;
+
+        const r = scheme.rules;
+        const genderText = r.gender === "FemaleOrSCST" ? "SC/ST or Women Founders" : r.gender;
+        const criteriaItems = [
+          `Age: ${r.minAge} – ${r.maxAge >= 120 ? "60+" : r.maxAge} years`,
+          `Max Income: ${formatRupees(r.maxIncome)} / yr`,
+          `Priority: ${genderText}`,
+          `Occupation: ${r.occupation.join(", ")}`,
+          `Category: ${r.categories.length === 4 ? "All Categories" : r.categories.join(", ")}`
+        ];
+        el.modalCriteria.innerHTML = criteriaItems
+          .map((item) => `<span class="criteria-pill">${escapeHtml(item)}</span>`)
+          .join("");
+
+        el.modalDocuments.innerHTML = scheme.documents
+          .map((doc) => `<li><span>📄</span><span>${escapeHtml(doc)}</span></li>`)
+          .join("");
+
+        el.modalApplyLink.href = scheme.applyLink;
+        updateModalSaveButton(schemeId);
+        el.detailsModal.classList.remove("hidden");
+      }
+
+      function closeDetailsModal() {
+        el.detailsModal.classList.add("hidden");
+        state.activeModalSchemeId = null;
+      }
+
+      /* ----------------------------------------------------------------------
+         12. KEYWORD-BASED AI ASSISTANT CHATBOT
+         ---------------------------------------------------------------------- */
+      function appendChatMessage(sender, text) {
+        const div = document.createElement("div");
+        div.className = "chat-msg " + sender;
+        div.textContent = text;
+        el.chatMessages.appendChild(div);
+        el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
+      }
+
+      function initChatWelcome() {
+        el.chatMessages.innerHTML = "";
+        const name = state.profile.name || "Founder";
+        appendChatMessage(
+          "bot",
+          `Hi ${name}! I'm SchemeSetu. Ask me about startup grants, MSME loans (PM Mudra, PMEGP, Startup India Seed Fund, CGSS, Stand-Up India), your top eligible matches, required documents, or how to apply.`
+        );
+      }
+
+      function generateBotReply(rawQuery) {
+        const q = rawQuery.toLowerCase().trim();
+        const evaluated = getEvaluatedSchemes();
+
+        // 1. Direct scheme match
+        const directMatch = evaluated.find((s) => {
+          const tokens = s.name.toLowerCase().split(/[\s()-]+/).filter((t) => t.length > 3);
+          return q.includes(s.id.replace("-", " ")) ||
+            q.includes(s.name.toLowerCase()) ||
+            (q.includes("mudra") && s.id === "pmmy") ||
+            (q.includes("pmegp") && s.id === "pmegp") ||
+            ((q.includes("cgss") || q.includes("credit guarantee")) && s.id === "cgss") ||
+            ((q.includes("stand-up") || q.includes("stand up")) && s.id === "standup-india") ||
+            (q.includes("seed fund") && s.id === "sisfs") ||
+            (q.includes("kisan") && s.id === "pm-kisan") ||
+            (q.includes("fasal") && s.id === "pmfby") ||
+            (q.includes("credit card") && s.id === "kcc") ||
+            (q.includes("vidyalaxmi") && s.id === "pm-vidyalaxmi") ||
+            (q.includes("post matric") && s.id === "post-matric") ||
+            (q.includes("old age") && s.id === "ignoaps") ||
+            (q.includes("scss") && s.id === "scss") ||
+            tokens.some((t) => t.length >= 7 && q.includes(t));
+        });
+
+        if (directMatch) {
+          return `${directMatch.name} (${directMatch.match.score}% match — ${directMatch.match.status})\n` +
+            `• Benefit: ${directMatch.benefits}\n` +
+            `• Documents: ${directMatch.documents.join(", ")}\n` +
+            `• AI Note: ${directMatch.match.explanation}\n` +
+            `Click "View Details" on its card to open the official portal link.`;
+        }
+
+        // 2. Top matches / eligibility
+        if (q.includes("top") || q.includes("my match") || q.includes("eligible") || q.includes("qualify") || q.includes("recommend")) {
+          const top3 = evaluated.slice(0, 3);
+          const list = top3.map((s, i) => `${i + 1}. ${s.name} — ${s.match.score}% (${s.match.status})`).join("\n");
+          return `Based on your profile (${state.profile.occupation}, age ${state.profile.age}, income ${formatRupees(state.profile.income)}, ${state.profile.category}), your top matches are:\n${list}\n\nUpdate your profile anytime to recalculate scores.`;
+        }
+
+        // 3. Category queries
+        const catChecks = [
+          { keys: ["entrepreneur", "business", "startup", "msme", "founder", "grant", "subsidy", "loan"], cat: "Entrepreneurs" },
+          { keys: ["student", "scholarship", "college", "education"], cat: "Students" },
+          { keys: ["farmer", "agri", "crop", "kisan", "farming"], cat: "Farmers" },
+          { keys: ["senior", "pension", "elderly", "retired", "old"], cat: "Senior Citizens" }
+        ];
+        for (const item of catChecks) {
+          if (item.keys.some((k) => q.includes(k))) {
+            const groupSchemes = evaluated.filter((s) => s.category === item.cat);
+            const lines = groupSchemes.map((s) => `• ${s.name} (${s.match.score}% match)`).join("\n");
+            return `Here are the ${item.cat} schemes on SchemeSetu:\n${lines}\n\nClick the ${item.cat} category card on the dashboard to filter them.`;
+          }
+        }
+
+        // 4. Documents query
+        if (q.includes("document") || q.includes("doc") || q.includes("paper") || q.includes("aadhaar") || q.includes("certificate")) {
+          return `Core documents for Entrepreneurs & Startup schemes:\n• Founder Aadhaar Card & PAN Card\n• Detailed Project Report (DPR) or Startup Pitch Deck\n• DPIIT Recognition / Udyam Registration Certificate (for startup & MSME schemes)\n• Business Address Proof & Bank Account Statement\n\nOpen "View Details" on any scheme card for its exact checklist.`;
+        }
+
+        // 5. How to apply query
+        if (q.includes("apply") || q.includes("process") || q.includes("register") || q.includes("portal") || q.includes("how")) {
+          return `How to apply in 4 simple steps:\n1. Fill out your Eligibility Profile on this dashboard to rank your best-fit schemes.\n2. Click "View Details" on a scheme to review its rules and document checklist.\n3. Prepare scanned copies of Aadhaar, PAN, Project Report / DPIIT certificate, and bank details.\n4. Click "Apply on Official Portal" to register directly on the government website or visit a participating bank.`;
+        }
+
+        // 6. Saved / bookmarks query
+        if (q.includes("save") || q.includes("bookmark")) {
+          if (state.savedIds.length === 0) {
+            return `You haven't saved any schemes yet. Click the bookmark icon on any scheme card to save it for later!`;
+          }
+          const savedNames = SCHEMES_DATA.filter((s) => state.savedIds.includes(s.id)).map((s) => "• " + s.name).join("\n");
+          return `You have ${state.savedIds.length} saved scheme(s):\n${savedNames}\n\nUse the "Saved" button in the filter bar to view only your bookmarked schemes.`;
+        }
+
+        // 7. Greeting
+        if (/^(hi|hello|hey|namaste|good morning|good evening)\b/.test(q)) {
+          return `Hello! Ready to find the right funding or scheme? Ask me about entrepreneur loans (Mudra, PMEGP, CGSS, Seed Fund), your top matches, documents, or how to apply.`;
+        }
+
+        // 8. Friendly Fallback
+        return `I didn't quite catch that, but I can help with:\n• "What are my top eligible schemes?"\n• "Show entrepreneur and startup funding schemes"\n• "Tell me about PMEGP" or "Tell me about PM Mudra"\n• "What documents do entrepreneurs need?"\n• "How do I apply?"`;
+      }
+
+      function toggleChatPanel(forceOpen) {
+        const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : el.chatPanel.classList.contains("hidden");
+        el.chatPanel.classList.toggle("hidden", !shouldOpen);
+        if (shouldOpen) {
+          el.chatInput.focus();
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         13. EVENT LISTENERS
+         ---------------------------------------------------------------------- */
+      // Theme switcher buttons (both auth screen & dashboard navbar)
+      document.querySelectorAll("[data-theme-set]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.themeSet !== state.theme) {
+            applyTheme(btn.dataset.themeSet, true);
+          }
+        });
+      });
+
+      // Auth tab switching
+      el.loginTabBtn.addEventListener("click", () => setAuthMode("login"));
+      el.signupTabBtn.addEventListener("click", () => setAuthMode("signup"));
+
+      // Auth form submit
+      el.authForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = el.authEmail.value.trim();
+        const password = el.authPassword.value;
+        const name = el.authName.value.trim();
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showAuthError("Please enter a valid email address.");
+          return;
+        }
+        if (!password || password.length < 6) {
+          showAuthError("Password must be at least 6 characters long.");
+          return;
+        }
+        if (state.authMode === "signup" && !name) {
+          showAuthError("Please enter your full name to sign up.");
+          return;
+        }
+
+        completeLogin(email, name);
+      });
+
+      // Quick Demo Founder Login
+      el.demoLoginBtn.addEventListener("click", () => {
+        completeLogin("rohan.verma@founder.in", "Rohan Verma");
+      });
+
+      // Logout
+      el.logoutBtn.addEventListener("click", handleLogout);
+
+      // Navbar & Mobile Drawer navigation
+      function handleNavClick(target) {
+        el.mobileNavDrawer.classList.remove("open");
+        el.mobileMenuBtn.setAttribute("aria-expanded", "false");
+
+        if (target === "open-ai") {
+          toggleChatPanel(true);
+          return;
+        }
+        const section = document.getElementById(target);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll(".nav-links .nav-link").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.nav === target);
+        });
+      }
+
+      document.querySelectorAll("[data-nav]").forEach((btn) => {
+        btn.addEventListener("click", () => handleNavClick(btn.dataset.nav));
+      });
+
+      el.mobileMenuBtn.addEventListener("click", () => {
+        const isOpen = el.mobileNavDrawer.classList.toggle("open");
+        el.mobileMenuBtn.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      // Category cards click (delegation)
+      el.categoryGrid.addEventListener("click", (e) => {
+        const card = e.target.closest(".category-card");
+        if (!card) return;
+        const clickedCat = card.dataset.cat;
+        state.filters.category = state.filters.category === clickedCat ? "All" : clickedCat;
+        el.categoryFilter.value = state.filters.category;
+        renderCategories();
+        renderSchemes();
+        document.getElementById("schemes-section").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      el.clearCategoryBtn.addEventListener("click", () => {
+        state.filters.category = "All";
+        el.categoryFilter.value = "All";
+        renderCategories();
+        renderSchemes();
+      });
+
+      // Eligibility Form submit & reset
+      el.eligibilityForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        state.profile = {
+          name: el.profName.value.trim() || "Founder",
+          age: Math.max(0, Math.min(120, Number(el.profAge.value) || 0)),
+          gender: el.profGender.value,
+          state: el.profState.value,
+          income: Math.max(0, Number(el.profIncome.value) || 0),
+          category: el.profCategory.value,
+          occupation: el.profOccupation.value
+        };
+        Storage.set("schemesetu_profile", state.profile);
+        syncDashboardUI();
+        showToast("Eligibility scores updated for " + state.profile.name + "!");
+        document.getElementById("schemes-section").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      el.resetProfileBtn.addEventListener("click", () => {
+        state.profile = { ...DEFAULT_PROFILE, name: (state.session && state.session.name) || DEFAULT_PROFILE.name };
+        Storage.set("schemesetu_profile", state.profile);
+        syncDashboardUI();
+        showToast("Profile reset to default entrepreneur values.");
+      });
+
+      // Search & Filter controls
+      el.schemeSearch.addEventListener("input", (e) => {
+        state.filters.search = e.target.value;
+        renderSchemes();
+      });
+
+      el.categoryFilter.addEventListener("change", (e) => {
+        state.filters.category = e.target.value;
+        renderCategories();
+        renderSchemes();
+      });
+
+      el.statusFilter.addEventListener("change", (e) => {
+        state.filters.status = e.target.value;
+        renderSchemes();
+      });
+
+      el.savedOnlyBtn.addEventListener("click", () => {
+        state.filters.savedOnly = !state.filters.savedOnly;
+        renderSchemes();
+      });
+
+      el.resetFiltersBtn.addEventListener("click", () => {
+        state.filters = { search: "", category: "All", status: "All", savedOnly: false };
+        el.schemeSearch.value = "";
+        el.categoryFilter.value = "All";
+        el.statusFilter.value = "All";
+        renderCategories();
+        renderSchemes();
+      });
+
+      // Scheme Card actions (Bookmark & View Details via delegation)
+      el.schemesGrid.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-action]");
+        if (!btn) return;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if (action === "bookmark") {
+          toggleSaveScheme(id);
+        } else if (action === "details") {
+          openDetailsModal(id);
+        }
+      });
+
+      // Modal controls
+      el.closeModalBtn.addEventListener("click", closeDetailsModal);
+      el.detailsModal.addEventListener("click", (e) => {
+        if (e.target === el.detailsModal) closeDetailsModal();
+      });
+      el.modalSaveBtn.addEventListener("click", () => {
+        if (state.activeModalSchemeId) toggleSaveScheme(state.activeModalSchemeId);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (!el.detailsModal.classList.contains("hidden")) closeDetailsModal();
+          else if (!el.chatPanel.classList.contains("hidden")) toggleChatPanel(false);
+        }
+      });
+
+      // AI Assistant Chat controls
+      el.chatFab.addEventListener("click", () => toggleChatPanel());
+      el.chatCloseBtn.addEventListener("click", () => toggleChatPanel(false));
+
+      el.chatSuggestions.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chat-chip");
+        if (!chip) return;
+        const question = chip.dataset.q;
+        appendChatMessage("user", question);
+        setTimeout(() => appendChatMessage("bot", generateBotReply(question)), 180);
+      });
+
+      el.chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = el.chatInput.value.trim();
+        if (!text) return;
+        appendChatMessage("user", text);
+        el.chatInput.value = "";
+        setTimeout(() => appendChatMessage("bot", generateBotReply(text)), 180);
+      });
+
+      /* ----------------------------------------------------------------------
+         14. INITIALIZE APP
+         ---------------------------------------------------------------------- */
+      applyTheme(state.theme, false);
+      populateStatesDropdown();
+      renderRoute();
+    })();
+  </script>
+</body>
+</html>
